@@ -1,0 +1,107 @@
+@import 'tdesign-miniprogram/es/style/index.css';
+
+page {
+  background-color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.container {
+  padding: 20px;
+}
+
+/* 通用样式 */
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+/* 卡片样式 */
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* 按钮样式 */
+.btn-primary {
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 20px 40px;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  padding: 20px 40px;
+  font-size: 30px;
+}
+
+/* 标签样式 */
+.tag {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.tag-chest {
+  background: rgba(255, 107, 107, 0.15);
+  color: #FF6B6B;
+}
+
+.tag-back {
+  background: rgba(78, 205, 196, 0.15);
+  color: #4ECDC4;
+}
+
+.tag-legs {
+  background: rgba(69, 183, 209, 0.15);
+  color: #45B7D1;
+}
+
+.tag-shoulders {
+  background: rgba(150, 206, 180, 0.15);
+  color: #96CEB4;
+}
+
+.tag-arms {
+  background: rgba(255, 234, 167, 0.15);
+  color: #F0C040;
+}
+
+.tag-core {
+  background: rgba(221, 160, 221, 0.15);
+  color: #DDA0DD;
+}

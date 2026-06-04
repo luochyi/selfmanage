@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: fitness-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fitness_tracker
+      MYSQL_USER: fitness
+      MYSQL_PASSWORD: fitness123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fitness-network
+
+  # NestJS 后端
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: fitness-server
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_DATABASE: fitness_tracker
+      JWT_SECRET: fitness-tracker-secret-key
+      WX_APPID: your-appid
+      WX_SECRET: your-secret
+    depends_on:
+      - mysql
+    networks:
+      - fitness-network
+
+volumes:
+  mysql-data:
+
+networks:
+  fitness-network:
+    driver: bridge
