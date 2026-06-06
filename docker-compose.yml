@@ -33,9 +33,9 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: root
       DB_DATABASE: fitness_tracker
-      JWT_SECRET: fitness-tracker-secret-key
-      WX_APPID: your-appid
-      WX_SECRET: your-secret
+      JWT_SECRET: fitness-tracker-jwt-secret-key-2024
+      WX_APPID: wxf29facc70542b8dc
+      WX_SECRET: 475dd5f16ee9442f4deb7180d5707a8c
     depends_on:
       - mysql
     networks:

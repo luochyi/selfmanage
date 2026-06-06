@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro'
+import config from '../config'
 
-const BASE_URL = 'http://localhost:3000/api'
+const BASE_URL = config.baseUrl
 
 interface RequestOptions {
   url: string
