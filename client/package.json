@@ -52,6 +52,7 @@
     "@tarojs/runtime": "3.6.31",
     "@tarojs/shared": "3.6.31",
     "@tarojs/taro": "3.6.31",
+    "enhanced-resolve": "^5.23.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "tdesign-miniprogram": "^1.3.0"

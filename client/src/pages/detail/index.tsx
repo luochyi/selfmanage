@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { View, Text } from '@tarojs/components'
-import Taro, { useRouter } from '@tarojs/taro'
+import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import { get } from '../../utils/request'
 import './index.scss'
 
@@ -56,7 +56,7 @@ export default function DetailPage() {
   // 编辑训练
   const handleEdit = (workoutId: number) => {
     Taro.navigateTo({
-      url: `/pages/workout/index?id=${workoutId}`,
+      url: `/pages/workout/index?id=${workoutId}&date=${date}`,
     })
   }
 
@@ -70,6 +70,13 @@ export default function DetailPage() {
   useEffect(() => {
     fetchWorkouts()
   }, [date])
+
+  // 页面重新显示时刷新数据（从 workout 页返回时）
+  useDidShow(() => {
+    if (date) {
+      fetchWorkouts()
+    }
+  })
 
   return (
     <View className="detail-page">
@@ -99,7 +106,7 @@ export default function DetailPage() {
               </View>
 
               <View className="exercise-list">
-                {workout.details.map((detail) => (
+                {(workout.details || []).map((detail) => (
                   <View key={detail.id} className="exercise-item">
                     <Text className="exercise-name">{detail.exercise.name}</Text>
                     <View className="exercise-data">

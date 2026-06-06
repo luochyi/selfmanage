@@ -26,7 +26,7 @@ export class WorkoutService {
         user_id: userId,
         workout_date: Between(startDate, endDate),
       },
-      relations: ['bodyPart'],
+      relations: ['bodyPart', 'details', 'details.exercise'],
       order: { workout_date: 'ASC' },
     });
 

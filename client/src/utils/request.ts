@@ -38,20 +38,24 @@ export const request = <T = any>(options: RequestOptions): Promise<ApiResponse<T
           // Token 过期，跳转登录
           Taro.removeStorageSync('token')
           Taro.removeStorageSync('user')
-          Taro.navigateTo({ url: '/pages/profile/index' })
+          Taro.switchTab({ url: '/pages/profile/index' })
           reject(new Error('请先登录'))
           return
         }
         
         const data = res.data as ApiResponse<T>
-        if (data.code === 0) {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(data)
         } else {
+          // NestJS validation errors return message as array
+          const errorMsg = Array.isArray(data.message) 
+            ? data.message.join('; ') 
+            : (data.message || '请求失败')
           Taro.showToast({
-            title: data.message || '请求失败',
+            title: errorMsg,
             icon: 'none',
           })
-          reject(new Error(data.message))
+          reject(new Error(errorMsg))
         }
       },
       fail: (err) => {

@@ -22,4 +22,19 @@ export class AuthController {
       throw new BadRequestException('微信登录失败: ' + error.message);
     }
   }
+
+  // 开发环境模拟登录
+  @Get('dev-login')
+  async devLogin() {
+    try {
+      const result = await this.authService.devLogin();
+      return {
+        code: 0,
+        message: '登录成功',
+        data: result,
+      };
+    } catch (error) {
+      throw new BadRequestException('登录失败: ' + error.message);
+    }
+  }
 }

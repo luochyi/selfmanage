@@ -25,6 +25,7 @@ import { BodyPartModule } from './modules/body-part/body-part.module';
       entities: [__dirname + '/entities/*.entity{.ts,.js}'],
       synchronize: true, // 开发环境下自动同步表结构
       logging: process.env.NODE_ENV === 'development',
+      charset: 'utf8mb4',
     }),
     
     // 业务模块

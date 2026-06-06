@@ -176,7 +176,7 @@ export default function CalendarPage() {
             <Text className="day-number">{day.day}</Text>
             {day.isCurrentMonth && day.workouts.length > 0 && (
               <View className="workout-tags">
-                {day.workouts.slice(0, 2).map((workout) => (
+                {day.workouts.slice(0, 1).map((workout) => (
                   <View
                     key={workout.id}
                     className="workout-tag"
@@ -187,8 +187,8 @@ export default function CalendarPage() {
                     </Text>
                   </View>
                 ))}
-                {day.workouts.length > 2 && (
-                  <Text className="more-tag">+{day.workouts.length - 2}</Text>
+                {day.workouts.length > 1 && (
+                  <Text className="more-tag">+{day.workouts.length - 1}</Text>
                 )}
               </View>
             )}

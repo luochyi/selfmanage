@@ -48,6 +48,25 @@ export default function ProfilePage() {
     }
   }
 
+  // 开发环境模拟登录
+  const handleDevLogin = async () => {
+    try {
+      const res = await get('/auth/dev-login')
+      const { token, user } = res.data
+      
+      Taro.setStorageSync('token', token)
+      Taro.setStorageSync('user', user)
+      
+      setIsLoggedIn(true)
+      setUserInfo(user)
+      
+      Taro.showToast({ title: '开发登录成功', icon: 'success' })
+    } catch (error) {
+      console.error('开发登录失败', error)
+      Taro.showToast({ title: '开发登录失败', icon: 'none' })
+    }
+  }
+
   // 退出登录
   const handleLogout = () => {
     Taro.removeStorageSync('token')
@@ -82,8 +101,11 @@ export default function ProfilePage() {
         ) : (
           <View className="login-prompt">
             <Text className="login-text">登录后同步训练数据</Text>
+            <View className="dev-login-btn" onClick={handleDevLogin}>
+              <Text>开发测试登录</Text>
+            </View>
             <View className="login-btn" onClick={handleLogin}>
-              <Text>微信登录</Text>
+              <Text>微信登录（需配置AppID）</Text>
             </View>
           </View>
         )}

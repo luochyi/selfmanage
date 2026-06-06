@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Input, Picker } from '@tarojs/components'
+import { View, Text, Input } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { get, post, put, del } from '../../utils/request'
 import './index.scss'
@@ -26,8 +26,8 @@ interface WorkoutDetail {
 
 export default function WorkoutPage() {
   const router = useRouter()
-  const date = router.params.date || ''
   const workoutId = router.params.id
+  const [date, setDate] = useState(router.params.date || '')
 
   const [bodyParts, setBodyParts] = useState<BodyPart[]>([])
   const [exercises, setExercises] = useState<Exercise[]>([])
@@ -36,6 +36,11 @@ export default function WorkoutPage() {
   const [note, setNote] = useState('')
   const [loading, setLoading] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
+
+  // 自定义选择器状态
+  const [showBodyPartPicker, setShowBodyPartPicker] = useState(false)
+  const [showExercisePicker, setShowExercisePicker] = useState(false)
+  const [exercisePickerIndex, setExercisePickerIndex] = useState(-1)
 
   // 获取部位列表
   const fetchBodyParts = async () => {
@@ -66,13 +71,18 @@ export default function WorkoutPage() {
       const res = await get(`/workouts/${workoutId}`)
       const workout = res.data
       
+      // 如果没有从URL传date，则从接口数据中获取
+      if (!date && workout.workout_date) {
+        setDate(workout.workout_date.split('T')[0])
+      }
+      
       setSelectedBodyPart(workout.bodyPart)
       setWorkoutDetails(workout.details.map(d => ({
         exercise_id: d.exercise_id,
         exercise_name: d.exercise.name,
-        weight: d.weight || 0,
-        sets_count: d.sets_count || 0,
-        reps: d.reps || 0,
+        weight: Number(d.weight) || 0,
+        sets_count: Number(d.sets_count) || 0,
+        reps: Number(d.reps) || 0,
       })))
       setNote(workout.note || '')
       setIsEdit(true)
@@ -86,12 +96,27 @@ export default function WorkoutPage() {
   }
 
   // 选择部位
-  const handleBodyPartChange = (e) => {
-    const index = e.detail.value
-    const part = bodyParts[index]
+  const handleBodyPartSelect = (part: BodyPart) => {
     setSelectedBodyPart(part)
     fetchExercises(part.id)
     setWorkoutDetails([])
+    setShowBodyPartPicker(false)
+  }
+
+  // 打开动作选择器
+  const openExercisePicker = (index: number) => {
+    setExercisePickerIndex(index)
+    setShowExercisePicker(true)
+  }
+
+  // 选择动作
+  const handleExerciseSelect = (exercise: Exercise) => {
+    if (exercisePickerIndex >= 0) {
+      handleDetailChange(exercisePickerIndex, 'exercise_id', exercise.id)
+      handleDetailChange(exercisePickerIndex, 'exercise_name', exercise.name)
+    }
+    setShowExercisePicker(false)
+    setExercisePickerIndex(-1)
   }
 
   // 添加动作
@@ -127,13 +152,7 @@ export default function WorkoutPage() {
     setWorkoutDetails(newDetails)
   }
 
-  // 选择动作
-  const handleExerciseChange = (index: number, e) => {
-    const exerciseIndex = e.detail.value
-    const exercise = exercises[exerciseIndex]
-    handleDetailChange(index, 'exercise_id', exercise.id)
-    handleDetailChange(index, 'exercise_name', exercise.name)
-  }
+
 
   // 保存训练记录
   const handleSave = async () => {
@@ -150,15 +169,18 @@ export default function WorkoutPage() {
     try {
       setLoading(true)
       
+      // 确保日期格式为 ISO 8601
+      const workoutDate = date.includes('T') ? date : `${date}T00:00:00.000Z`
+      
       const data = {
-        workout_date: date,
+        workout_date: workoutDate,
         body_part_id: selectedBodyPart.id,
         note,
         details: workoutDetails.map((d, index) => ({
           exercise_id: d.exercise_id,
-          weight: d.weight || 0,
-          sets_count: d.sets_count || 0,
-          reps: d.reps || 0,
+          weight: Number(d.weight) || 0,
+          sets_count: Number(d.sets_count) || 0,
+          reps: Number(d.reps) || 0,
           sort_order: index,
         })),
       }
@@ -215,12 +237,10 @@ export default function WorkoutPage() {
       {/* 选择部位 */}
       <View className="section">
         <Text className="section-title">训练部位</Text>
-        <Picker mode="selector" range={bodyParts} rangeKey="name" onChange={handleBodyPartChange}>
-          <View className="picker-btn">
-            <Text>{selectedBodyPart ? selectedBodyPart.name : '请选择部位'}</Text>
-            <Text className="arrow">{'>'}</Text>
-          </View>
-        </Picker>
+        <View className="picker-btn" onClick={() => setShowBodyPartPicker(true)}>
+          <Text>{selectedBodyPart ? selectedBodyPart.name : '请选择部位'}</Text>
+          <Text className="arrow">{'>'}</Text>
+        </View>
       </View>
 
       {/* 动作列表 */}
@@ -235,18 +255,10 @@ export default function WorkoutPage() {
         {workoutDetails.map((detail, index) => (
           <View key={index} className="exercise-card">
             <View className="exercise-header">
-              <Picker
-                mode="selector"
-                range={exercises}
-                rangeKey="name"
-                value={exercises.findIndex(e => e.id === detail.exercise_id)}
-                onChange={(e) => handleExerciseChange(index, e)}
-              >
-                <View className="exercise-name">
-                  <Text>{detail.exercise_name || '选择动作'}</Text>
-                  <Text className="arrow">{'>'}</Text>
-                </View>
-              </Picker>
+              <View className="exercise-name" onClick={() => openExercisePicker(index)}>
+                <Text>{detail.exercise_name || '选择动作'}</Text>
+                <Text className="arrow">{'>'}</Text>
+              </View>
               <View className="delete-btn" onClick={() => handleRemoveExercise(index)}>
                 <Text>×</Text>
               </View>
@@ -307,6 +319,56 @@ export default function WorkoutPage() {
           <Text>保存</Text>
         </View>
       </View>
+
+      {/* 部位选择弹窗 */}
+      {showBodyPartPicker && (
+        <View>
+          <View className="modal-mask" onClick={() => setShowBodyPartPicker(false)} />
+          <View className="modal-content">
+            <View className="modal-header">
+              <Text className="modal-cancel" onClick={() => setShowBodyPartPicker(false)}>取消</Text>
+              <Text className="modal-confirm">请选择部位</Text>
+              <Text style={{ width: 60 }} />
+            </View>
+            <View className="modal-list">
+              {bodyParts.map((part) => (
+                <View
+                  key={part.id}
+                  className="modal-item"
+                  onClick={() => handleBodyPartSelect(part)}
+                >
+                  <Text>{part.name}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* 动作选择弹窗 */}
+      {showExercisePicker && (
+        <View>
+          <View className="modal-mask" onClick={() => setShowExercisePicker(false)} />
+          <View className="modal-content">
+            <View className="modal-header">
+              <Text className="modal-cancel" onClick={() => setShowExercisePicker(false)}>取消</Text>
+              <Text className="modal-confirm">请选择动作</Text>
+              <Text style={{ width: 60 }} />
+            </View>
+            <View className="modal-list">
+              {exercises.map((exercise) => (
+                <View
+                  key={exercise.id}
+                  className="modal-item"
+                  onClick={() => handleExerciseSelect(exercise)}
+                >
+                  <Text>{exercise.name}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   )
 }
