@@ -113,8 +113,11 @@ export default function WorkoutPage() {
   // 选择动作
   const handleExerciseSelect = (exercise: Exercise) => {
     if (exercisePickerIndex >= 0) {
-      handleDetailChange(exercisePickerIndex, 'exercise_id', exercise.id)
-      handleDetailChange(exercisePickerIndex, 'exercise_name', exercise.name)
+      setWorkoutDetails(prev => prev.map((d, i) =>
+        i === exercisePickerIndex
+          ? { ...d, exercise_id: exercise.id, exercise_name: exercise.name }
+          : d
+      ))
     }
     setShowExercisePicker(false)
     setExercisePickerIndex(-1)

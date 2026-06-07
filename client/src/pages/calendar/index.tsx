@@ -100,6 +100,14 @@ export default function CalendarPage() {
     newDate.setMonth(newDate.getMonth() + delta)
     setCurrentDate(newDate)
     setSelectedDate(null)
+
+    // 重新获取新月份的训练数据
+    const month = `${newDate.getFullYear()}-${String(newDate.getMonth() + 1).padStart(2, '0')}`
+    get<WorkoutSession[]>(`/workouts?month=${month}`).then(res => {
+      setWorkouts(res.data || [])
+    }).catch(error => {
+      console.error('获取训练数据失败', error)
+    })
   }
 
   // 点击日期：第一次点击选中，第二次点击跳转
