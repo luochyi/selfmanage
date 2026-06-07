@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Image } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
+import { AtIcon } from 'taro-ui'
 import { get } from '../../utils/request'
 import './index.scss'
 
@@ -24,6 +25,15 @@ export default function ProfilePage() {
       setUserInfo(user)
     }
   }, [])
+
+  useDidShow(() => {
+    try {
+      const page: any = Taro.getCurrentInstance().page
+      if (page?.getTabBar) {
+        page.getTabBar().setSelected(1)
+      }
+    } catch (e) {}
+  })
 
   // 微信登录
   const handleLogin = async () => {
@@ -101,11 +111,11 @@ export default function ProfilePage() {
         ) : (
           <View className="login-prompt">
             <Text className="login-text">登录后同步训练数据</Text>
-            <View className="dev-login-btn" onClick={handleDevLogin}>
+            {/* <View className="dev-login-btn" onClick={handleDevLogin}>
               <Text>开发测试登录</Text>
-            </View>
+            </View> */}
             <View className="login-btn" onClick={handleLogin}>
-              <Text>微信登录（需配置AppID）</Text>
+              <Text>微信登录</Text>
             </View>
           </View>
         )}
@@ -114,20 +124,20 @@ export default function ProfilePage() {
       {/* 功能菜单 */}
       <View className="menu-section">
         <View className="menu-item" onClick={handleViewStats}>
-          <Text className="menu-icon">📊</Text>
+          <AtIcon value='chart' size='24' color='#4A90E2' />
           <Text className="menu-text">训练统计</Text>
-          <Text className="menu-arrow">{'>'}</Text>
+          <AtIcon value='chevron-right' size='20' color='#999' />
         </View>
-        <View className="menu-item">
-          <Text className="menu-icon">⚙️</Text>
+        {/* <View className="menu-item">
+          <AtIcon value='settings' size='24' color='#4A90E2' />
           <Text className="menu-text">设置</Text>
-          <Text className="menu-arrow">{'>'}</Text>
+          <AtIcon value='chevron-right' size='20' color='#999' />
         </View>
         <View className="menu-item">
-          <Text className="menu-icon">❓</Text>
+          <AtIcon value='help' size='24' color='#4A90E2' />
           <Text className="menu-text">帮助与反馈</Text>
-          <Text className="menu-arrow">{'>'}</Text>
-        </View>
+          <AtIcon value='chevron-right' size='20' color='#999' />
+        </View> */}
       </View>
 
       {/* 退出登录 */}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Input } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
+import { AtIcon } from 'taro-ui'
 import { get, post, put, del } from '../../utils/request'
 import './index.scss'
 
@@ -239,7 +240,7 @@ export default function WorkoutPage() {
         <Text className="section-title">训练部位</Text>
         <View className="picker-btn" onClick={() => setShowBodyPartPicker(true)}>
           <Text>{selectedBodyPart ? selectedBodyPart.name : '请选择部位'}</Text>
-          <Text className="arrow">{'>'}</Text>
+          <AtIcon value='chevron-right' size='20' color='#999' />
         </View>
       </View>
 
@@ -257,7 +258,7 @@ export default function WorkoutPage() {
             <View className="exercise-header">
               <View className="exercise-name" onClick={() => openExercisePicker(index)}>
                 <Text>{detail.exercise_name || '选择动作'}</Text>
-                <Text className="arrow">{'>'}</Text>
+                <AtIcon value='chevron-right' size='20' color='#999' />
               </View>
               <View className="delete-btn" onClick={() => handleRemoveExercise(index)}>
                 <Text>×</Text>

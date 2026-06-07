@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { View, Text } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
+import { AtIcon } from 'taro-ui'
 import { get } from '../../utils/request'
 import './index.scss'
 
@@ -27,6 +28,7 @@ export default function CalendarPage() {
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([])
   const [workouts, setWorkouts] = useState<WorkoutSession[]>([])
   const [loading, setLoading] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
   // 获取当月训练数据
   const fetchWorkouts = async () => {
@@ -97,9 +99,10 @@ export default function CalendarPage() {
     const newDate = new Date(currentDate)
     newDate.setMonth(newDate.getMonth() + delta)
     setCurrentDate(newDate)
+    setSelectedDate(null)
   }
 
-  // 点击日期
+  // 点击日期：第一次点击选中，第二次点击跳转
   const handleDayClick = (day: CalendarDay) => {
     if (!day.isCurrentMonth) return
     
@@ -107,16 +110,21 @@ export default function CalendarPage() {
     const month = currentDate.getMonth()
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`
     
-    if (day.workouts.length > 0) {
-      // 有训练记录，查看详情
-      Taro.navigateTo({
-        url: `/pages/detail/index?date=${dateStr}`,
-      })
+    if (selectedDate === dateStr) {
+      // 第二次点击，跳转详情
+      setSelectedDate(null)
+      if (day.workouts.length > 0) {
+        Taro.navigateTo({
+          url: `/pages/detail/index?date=${dateStr}`,
+        })
+      } else {
+        Taro.navigateTo({
+          url: `/pages/workout/index?date=${dateStr}`,
+        })
+      }
     } else {
-      // 无训练记录，新建训练
-      Taro.navigateTo({
-        url: `/pages/workout/index?date=${dateStr}`,
-      })
+      // 第一次点击，选中日期
+      setSelectedDate(dateStr)
     }
   }
 
@@ -131,6 +139,12 @@ export default function CalendarPage() {
 
   useDidShow(() => {
     fetchWorkouts()
+    try {
+      const page: any = Taro.getCurrentInstance().page
+      if (page?.getTabBar) {
+        page.getTabBar().setSelected(0)
+      }
+    } catch (e) {}
   })
 
   useEffect(() => {
@@ -145,13 +159,13 @@ export default function CalendarPage() {
       <View className="header">
         <View className="month-nav">
           <View className="nav-btn" onClick={() => changeMonth(-1)}>
-            <Text className="arrow">{'<'}</Text>
+            <AtIcon value='chevron-left' size='24' color='#333' />
           </View>
           <Text className="month-title">
             {currentDate.getFullYear()}年{currentDate.getMonth() + 1}月
           </Text>
           <View className="nav-btn" onClick={() => changeMonth(1)}>
-            <Text className="arrow">{'>'}</Text>
+            <AtIcon value='chevron-right' size='24' color='#333' />
           </View>
         </View>
       </View>
@@ -167,10 +181,17 @@ export default function CalendarPage() {
 
       {/* 日历网格 */}
       <View className="calendar-grid">
-        {calendarDays.map((day, index) => (
+        {calendarDays.map((day, index) => {
+          const year = currentDate.getFullYear()
+          const month = currentDate.getMonth()
+          const dateStr = day.isCurrentMonth
+            ? `${year}-${String(month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`
+            : ''
+          const isSelected = day.isCurrentMonth && selectedDate === dateStr
+          return (
           <View
             key={index}
-            className={`calendar-day ${day.isCurrentMonth ? 'current-month' : 'other-month'} ${day.isToday ? 'today' : ''}`}
+            className={`calendar-day ${day.isCurrentMonth ? 'current-month' : 'other-month'} ${day.isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
             onClick={() => handleDayClick(day)}
           >
             <Text className="day-number">{day.day}</Text>
@@ -193,12 +214,13 @@ export default function CalendarPage() {
               </View>
             )}
           </View>
-        ))}
+          )
+        })}
       </View>
 
       {/* 新增按钮 */}
       <View className="add-btn" onClick={handleAddWorkout}>
-        <Text className="add-icon">+</Text>
+        <AtIcon value='add' size='30' color='#fff' />
       </View>
     </View>
   )

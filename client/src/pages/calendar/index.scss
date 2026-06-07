@@ -5,10 +5,11 @@
 }
 
 .header {
-  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  background: #fff;
   border-radius: 16px;
   padding: 30px;
   margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .month-nav {
@@ -23,18 +24,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
 }
 
 .arrow {
-  color: #fff;
+  color: #333;
   font-size: 32px;
   font-weight: bold;
 }
 
 .month-title {
-  color: #fff;
+  color: #333;
   font-size: 36px;
   font-weight: 600;
 }
@@ -84,23 +84,43 @@
   opacity: 0.3;
 }
 
-.calendar-day.today {
-  background: rgba(74, 144, 226, 0.1);
-}
-
 .calendar-day.today .day-number {
   color: #4A90E2;
   font-weight: 600;
+}
+
+.calendar-day.selected {
+  background: rgba(74, 144, 226, 0.08);
+}
+
+.calendar-day.selected .day-number {
+  color: #4A90E2;
+  font-weight: 600;
+  position: relative;
+}
+
+.calendar-day.selected .day-number::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border: 2px solid #4A90E2;
+  border-radius: 50%;
+  box-sizing: border-box;
 }
 
 .day-number {
   font-size: 28px;
   color: #333;
   margin-bottom: 4px;
-  min-width: 40px;
-  height: 40px;
-  line-height: 40px;
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
   text-align: center;
+  position: relative;
 }
 
 .workout-tags {
