@@ -27,6 +27,16 @@ export default function ProfilePage() {
   }, [])
 
   useDidShow(() => {
+    // 每次页面显示时刷新用户信息（从设置页返回后更新）
+    const token = Taro.getStorageSync('token')
+    const user = Taro.getStorageSync('user')
+    if (token && user) {
+      setIsLoggedIn(true)
+      setUserInfo(user)
+    } else {
+      setIsLoggedIn(false)
+      setUserInfo(null)
+    }
     try {
       const page: any = Taro.getCurrentInstance().page
       if (page?.getTabBar) {
@@ -90,7 +100,12 @@ export default function ProfilePage() {
 
   // 查看训练统计
   const handleViewStats = () => {
-    Taro.showToast({ title: '统计功能开发中...', icon: 'none' })
+    Taro.navigateTo({ url: '/pages/stats/index' })
+  }
+
+  // 进入设置页面
+  const handleGoSettings = () => {
+    Taro.navigateTo({ url: '/pages/settings/index' })
   }
 
   return (
@@ -98,7 +113,7 @@ export default function ProfilePage() {
       {/* 用户信息卡片 */}
       <View className="user-card">
         {isLoggedIn && userInfo ? (
-          <View className="user-info">
+          <View className="user-info" onClick={handleGoSettings}>
             <Image
               className="avatar"
               src={userInfo.avatar_url || 'https://via.placeholder.com/120'}
@@ -124,8 +139,11 @@ export default function ProfilePage() {
       {/* 功能菜单 */}
       <View className="menu-section">
         <View className="menu-item" onClick={handleViewStats}>
-          <AtIcon value='chart' size='24' color='#4A90E2' />
           <Text className="menu-text">训练统计</Text>
+          <AtIcon value='chevron-right' size='20' color='#999' />
+        </View>
+        <View className="menu-item" onClick={handleGoSettings}>
+          <Text className="menu-text">设置</Text>
           <AtIcon value='chevron-right' size='20' color='#999' />
         </View>
         {/* <View className="menu-item">

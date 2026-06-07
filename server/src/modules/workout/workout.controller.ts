@@ -23,6 +23,34 @@ export class WorkoutController {
     };
   }
 
+  @Get('stats/weekly')
+  async getWeeklyStats(
+    @Request() req,
+    @Query('date') date: string,
+  ) {
+    const userId = req.user.userId;
+    const stats = await this.workoutService.getWeeklyStats(userId, date);
+    return {
+      code: 0,
+      message: 'success',
+      data: stats,
+    };
+  }
+
+  @Get('stats/monthly')
+  async getMonthlyStats(
+    @Request() req,
+    @Query('month') month: string,
+  ) {
+    const userId = req.user.userId;
+    const stats = await this.workoutService.getMonthlyStats(userId, month);
+    return {
+      code: 0,
+      message: 'success',
+      data: stats,
+    };
+  }
+
   @Get(':id')
   async getWorkoutDetail(
     @Request() req,

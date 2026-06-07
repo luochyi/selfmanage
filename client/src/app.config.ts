@@ -4,6 +4,8 @@ export default defineAppConfig({
     'pages/workout/index',
     'pages/detail/index',
     'pages/profile/index',
+    'pages/stats/index',
+    'pages/settings/index',
   ],
   window: {
     backgroundTextStyle: 'light',
