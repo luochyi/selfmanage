@@ -9,6 +9,29 @@
   border-radius: 16px;
   padding: 30px;
   margin-bottom: 20px;
+}
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-btn {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.nav-btn:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.header-center {
+  flex: 1;
   text-align: center;
 }
 

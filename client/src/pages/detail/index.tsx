@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { View, Text } from '@tarojs/components'
 import Taro, { useRouter, useDidShow } from '@tarojs/taro'
+import { AtIcon } from 'taro-ui'
 import { get } from '../../utils/request'
 import './index.scss'
 
@@ -29,22 +30,25 @@ interface WorkoutDetail {
 
 export default function DetailPage() {
   const router = useRouter()
-  const date = router.params.date || ''
+  const initDate = router.params.date || ''
+  const [currentDate, setCurrentDate] = useState(initDate)
   const [workouts, setWorkouts] = useState<WorkoutDetail[]>([])
   const [loading, setLoading] = useState(false)
 
   // 获取该日期的训练记录
-  const fetchWorkouts = async () => {
+  const fetchWorkouts = async (dateStr?: string) => {
+    const targetDate = dateStr || currentDate
+    if (!targetDate) return
     try {
       setLoading(true)
       
       // 获取当月数据
-      const dateObj = new Date(date)
+      const dateObj = new Date(targetDate)
       const month = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`
       const res = await get<WorkoutDetail[]>(`/workouts?month=${month}`)
       
       // 筛选该日期的记录
-      const dayWorkouts = (res.data || []).filter(w => w.workout_date.startsWith(date))
+      const dayWorkouts = (res.data || []).filter(w => w.workout_date.startsWith(targetDate))
       setWorkouts(dayWorkouts)
     } catch (error) {
       console.error('获取训练数据失败', error)
@@ -53,27 +57,36 @@ export default function DetailPage() {
     }
   }
 
+  // 切换日期
+  const changeDate = (delta: number) => {
+    const dateObj = new Date(currentDate)
+    dateObj.setDate(dateObj.getDate() + delta)
+    const newDate = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`
+    setCurrentDate(newDate)
+    fetchWorkouts(newDate)
+  }
+
   // 编辑训练
   const handleEdit = (workoutId: number) => {
     Taro.navigateTo({
-      url: `/pages/workout/index?id=${workoutId}&date=${date}`,
+      url: `/pages/workout/index?id=${workoutId}&date=${currentDate}`,
     })
   }
 
   // 新建训练
   const handleAdd = () => {
     Taro.navigateTo({
-      url: `/pages/workout/index?date=${date}`,
+      url: `/pages/workout/index?date=${currentDate}`,
     })
   }
 
   useEffect(() => {
     fetchWorkouts()
-  }, [date])
+  }, [currentDate])
 
   // 页面重新显示时刷新数据（从 workout 页返回时）
   useDidShow(() => {
-    if (date) {
+    if (currentDate) {
       fetchWorkouts()
     }
   })
@@ -82,8 +95,18 @@ export default function DetailPage() {
     <View className="detail-page">
       {/* 头部 */}
       <View className="header">
-        <Text className="date-text">{date}</Text>
-        <Text className="title-text">训练详情</Text>
+        <View className="nav-row">
+          <View className="nav-btn" onClick={() => changeDate(-1)}>
+            <AtIcon value='chevron-left' size='24' color='#fff' />
+          </View>
+          <View className="header-center">
+            <Text className="date-text">{currentDate}</Text>
+            <Text className="title-text">训练详情</Text>
+          </View>
+          <View className="nav-btn" onClick={() => changeDate(1)}>
+            <AtIcon value='chevron-right' size='24' color='#fff' />
+          </View>
+        </View>
       </View>
 
       {/* 训练记录列表 */}

@@ -67,13 +67,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  border-radius: 12px;
+  justify-content: center;
   position: relative;
   cursor: pointer;
   transition: all 0.2s;
-  padding-top: 8px;
-  min-height: 80px;
+  padding: 8px 0;
+  min-height: 68px;
+  border-radius: 8px;
 }
 
 .calendar-day:active {
@@ -90,32 +90,17 @@
 }
 
 .calendar-day.selected {
-  background: rgba(74, 144, 226, 0.08);
+  background: rgba(74, 144, 226, 0.12);
 }
 
 .calendar-day.selected .day-number {
   color: #4A90E2;
   font-weight: 600;
-  position: relative;
-}
-
-.calendar-day.selected .day-number::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
-  border: 2px solid #4A90E2;
-  border-radius: 50%;
-  box-sizing: border-box;
 }
 
 .day-number {
   font-size: 28px;
   color: #333;
-  margin-bottom: 4px;
   width: 44px;
   height: 44px;
   line-height: 44px;
@@ -129,7 +114,6 @@
   gap: 2px;
   width: 100%;
   padding: 0 2px;
-  flex: 1;
   justify-content: center;
   overflow: hidden;
 }
