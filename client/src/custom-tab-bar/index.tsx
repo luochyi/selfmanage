@@ -3,11 +3,7 @@ import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import './index.scss'
 
-interface TabBarProps {
-  selected: number
-}
-
-export default class CustomTabBar extends Component<TabBarProps> {
+export default class CustomTabBar extends Component {
   state = {
     selected: 0,
   }

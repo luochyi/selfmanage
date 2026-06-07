@@ -39,8 +39,9 @@ export default function ProfilePage() {
     }
     try {
       const page: any = Taro.getCurrentInstance().page
-      if (page?.getTabBar) {
-        page.getTabBar().setSelected(1)
+      const tabBar = Taro.getTabBar(page)
+      if (tabBar) {
+        tabBar.setSelected(1)
       }
     } catch (e) {}
   })

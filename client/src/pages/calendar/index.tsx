@@ -141,8 +141,9 @@ export default function CalendarPage() {
     fetchWorkouts()
     try {
       const page: any = Taro.getCurrentInstance().page
-      if (page?.getTabBar) {
-        page.getTabBar().setSelected(0)
+      const tabBar = Taro.getTabBar(page)
+      if (tabBar) {
+        tabBar.setSelected(0)
       }
     } catch (e) {}
   })
